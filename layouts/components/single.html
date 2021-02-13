@@ -1,37 +1,27 @@
 {{ define "title" }}
-{{ .Title }} · {{ .Site.Title }}
+  {{ .Title }} · {{ .Site.Title }}
 {{ end }}
 {{ define "content" }}
 
 <div class="container" itemscope itemtype="http://schema.org/Recipe">
-  <!-- call up the image and image credit link -->
+<!-- call up the image and image credit link -->
   {{ with .Params.Image }}
-  <div class="xs-p2">
-    <img itemprop="image" src="{{ . }}" />
-  </div>
+    <div class="xs-p2">
+      <img itemprop="image" src="{{ . }}" />
+    </div>
   {{ else }}
-  {{ range first 1 (.Resources.ByType "image") }}
-  <div class="xs-p2">
-    <img itemprop="image" src="{{$.Site.BaseURL}}{{ .RelPermalink }}" />
-  </div>
-  {{ end }}
+    {{ range first 1 (.Resources.ByType "image") }}
+      <div class="xs-p2">
+        <img itemprop="image" src="{{$.Site.BaseURL}}{{ .RelPermalink }}" />
+      </div>
+    {{ end }}
   {{ end }}
 
   <article class="post-content px2">
     <!-- call up the main recipe title and content -->
     <header class="post-header">
       <h1 class="post-title center m1 sm-mt3" itemprop="name">{{ .Title }}</h1>
-      <h3 class="center sm-col-8 mx-auto" itemprop="name">
-        <i class="fas fa-user-friends"></i>
-        {{ .Params.Yield }}
-        <i class="far fa-clock"></i>
-        Prep: {{ .Params.prepTime }}
-        <i class="far fa-clock"></i>
-        Cook: {{ .Params.cookTime }}
-
-      </h3>
     </header>
-
 
     <div class="px2 mt3 clearfix">
       <div class="sm-col-8 mx-auto" itemprop="description">{{.Content}}</div>
@@ -40,7 +30,7 @@
     <div class="clearfix mt3">
       {{ with .Params.yield }}
       <div class="sm-col sm-col-2">
-        <h4 class="blue mt0 mb2 xs-center">{{ i18n "yields" }}: {{ . }}</h4>
+          <h4 class="blue mt0 mb2 xs-center">{{ i18n "yields" }}: {{ . }}</h4>
       </div>
       {{ end }}
       {{ with .Params.prepTime }}
@@ -94,34 +84,32 @@
         </ul>
       </div>
     </div>
-    <!-- end recipe and directions -->
+    <!-- end recipe and directions --> 
 
     <!-- check if it's a component-based recipe, render it -->
     {{ with .Params.Components }}
     <div class="components bg-darken-2 p2 mt3 mb3 center">
-      &darr; {{ i18n "this-is-a" }} <strong class="blue">{{ i18n "component-based-recipe" }}</strong> ({{ i18n
-      "fancy-talk" }}). &darr;
+      &darr; {{ i18n "this-is-a" }} <strong class="blue">{{ i18n "component-based-recipe" }}</strong> ({{ i18n "fancy-talk" }}). &darr;
     </div>
-
+    
     <div class="clearfix mxn2">
-      {{ range . }}
+    {{ range  . }}
       {{ $compTitle := . }}
       <div class="sm-col sm-col-4 px2 recipeItems">
-        {{ range where $.Site.Pages "Title" $compTitle }}
-        <h4 class="blue center"><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
+      {{ range where $.Site.Pages "Title" $compTitle }}
+        <h4 class="blue center">{{ .Title }}</h4>
         {{ range (.Resources.ByType "image") }}
         <div class="image ratio bg-cover" style="background-image:url({{$.Site.BaseURL}}{{ .RelPermalink }});">
           <img class="hide" itemprop="photo" src="{{$.Site.BaseURL}}{{ .RelPermalink }}" />
         </div>
         {{ end }}
         {{ if .Params.Imagecredit }}
-        <a href="{{ .Params.Imagecredit }}" class="right">
-          <svg class="js-geomicon geomicon" width="14" height="14" data-icon="camera" viewBox="0 0 32 32"
-            style="fill:currentcolor">
-            <title>camera icon</title>
-            <path d="M0 6 L8 6 L10 2 L22 2 L24 6 L32 6 L32 28 L0 28 z M9 17 A7 7 0 0 0 23 17 A7 7 0 0 0 9 17"></path>
-          </svg>
-        </a>
+          <a href="{{ .Params.Imagecredit }}" class="right">
+            <svg class="js-geomicon geomicon" width="14" height="14" data-icon="camera" viewBox="0 0 32 32" style="fill:currentcolor">
+              <title>camera icon</title>
+              <path d="M0 6 L8 6 L10 2 L22 2 L24 6 L32 6 L32 28 L0 28 z M9 17 A7 7 0 0 0 23 17 A7 7 0 0 0 9 17"></path>
+            </svg>
+          </a>
         {{ end }}
 
         <h4 class="blue regular xs-center">{{ i18n "ingredients" }}</h4>
@@ -132,7 +120,7 @@
           </li>
           {{ end }}
         </ul>
-
+        
         <h4 class="blue regular xs-center">{{ i18n "steps" }}</h4>
         <ul itemprop="instructions">
           {{ range .Params.Directions }}
@@ -142,43 +130,18 @@
           {{ end }}
         </ul>
 
-        {{ end }}
-      </div>
       {{ end }}
-    </div>
-
+      </div>
     {{ end }}
-    <!-- end components -->
+    </div>
+  
+    {{ end }}
+    <!-- end components -->  
     <br />
+
     {{ with .Params.Category }}{{ partial "taxonomy/category" . }}{{ end }}
     {{ with .Params.Cuisine }}{{ partial "taxonomy/cuisine" . }}{{ end }}
     {{ with .Params.Tags }}{{ partial "taxonomy/tags" . }}{{ end }}
-
-    <div class="recipe-source">
-      {{ if (or .Params.SourceName .Params.AuthorName) }}
-      {{ i18n "inspired" }}
-      {{ end }}
-
-      {{ with .Params.SourceName }}
-      {{$name := .}}
-      {{ i18n "by" }}
-      {{with $.Params.SourceURL }}
-      <a href="{{.}}">{{$name}}</a>
-      {{else}}
-      {{$name}}
-      {{end}}
-      {{ end }}
-
-      {{with .Params.AuthorName}}
-      {{$name := .}}
-      {{ i18n "from" }}
-      {{with $.Params.AuthorURL }}
-      <a href="{{.}}">{{$name}}</a>
-      {{else}}
-      {{$name}}
-      {{end}}
-      {{end}}
-    </div>
 
   </article>
 </div>
